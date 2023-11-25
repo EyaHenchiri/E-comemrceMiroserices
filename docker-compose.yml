@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+
+  Gataway:
+    container_name: gataway
+    build: .\Cloud-getway-service
+    ports:
+      - "8081:8081"
+    hostname: gataway
+    environment:
+      - eureka.client.serviceUrl.defaultZone = http://serviceregistry:8761/eureka/
+    image: gateway
+    depends_on:
+      - Eureka
+
+  Fournisseurs:
+    container_name: fournisseurs
+    build: .\ServiceFournisseur-main
+    ports:
+      - "8099:8099"
+    hostname: fournisseurs
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-mysql_1:3306/fournisseurs?createDatabaseIfNotExist=true&useUnicode=true
+      - spring.datasource.username=root
+      - spring.datasource.password=root
+      - eureka.client.serviceUrl.defaultZone = http://serviceregistry:8761/eureka/
+    image: "fournisseurs"
+    depends_on:
+      - docker-mysql_1
+      - Eureka
+
+
+  docker-mysql_1:
+    container_name: mysql1
+    image: mariadb:10.4.21
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "3307:3306"
+
+
+
+  Eureka:
+    container_name: serviceregistry
+    build: .\eurekaServer-master
+    ports:
+      - "8761:8761"
+    hostname: serviceregistry
+    image: "eureka"
+    environment:
+      - eureka.client.serviceUrl.defaultZone = http://serviceregistry:8761/eureka/
+
+
+
+
+
+

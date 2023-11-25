@@ -1,0 +1,44 @@
+server:
+  port: 8089
+
+spring:
+  application.name: API-gateway-client
+  cloud:
+    gateway:
+      routes:
+        - id: resources
+          uri: lb://PRODUIT
+          predicates:
+            Path=/produits/**
+          filters:
+            TokenRelay=
+
+
+
+
+
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          gateway:
+            provider: my-provider
+            client-id: my_client
+            client-secret: sxj9HdWo9b4GnmdmVHv9KDjPcn4ikWwJ
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8089/login/oauth2/code/{registrationId}"
+
+        provider:
+          my-provider:
+            issuer-uri: http://localhost:8080/realms/my_realm
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka
+
+
+
